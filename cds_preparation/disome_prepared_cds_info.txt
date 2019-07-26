@@ -1,0 +1,5 @@
+GTF file has been parsed: 116.60 second(s) elapsed
+GTF has been filtered: 2.35 second(s) elapsed
+10096 of 21996 genes are not expressed.
+27432 of 40053 potential transcripts are not expressed.
+548 of 2189 multi-protein coding transcripts has a single superset.

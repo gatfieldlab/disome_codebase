@@ -1,0 +1,78 @@
+specs:
+  treatment_name: Zeitgeber-Time
+  treatment_levels:
+    - "ZT00"
+    - "ZT02"
+    - "ZT12"
+  read_types:
+    Mono: [26, 35]
+    Di: [45, 70]
+    Tr: [21, 70]
+#    Tri: [75, 90]
+  separator: ""
+
+asites:
+  Mono:
+    default: std
+    all:
+      valid_range: [26, 35]
+      default_value: 15
+      relative: 5p
+      values:
+          31: 16
+          32: 16
+          33: 16
+          34: 16
+          35: 16
+    std:
+      valid_range: [28, 32]
+      default_value: 15
+      relative: 5p
+      values:
+          31: 16
+          32: 16
+    3p:
+      valid_range: [26, 35]
+      default_value: 0
+      relative: 3p
+  Di:
+    default: selective
+    all:
+      relative: 3p
+      valid_range: [56, 64]
+      default_value: 15
+    permissive:
+      relative: 5p
+      values:
+        55: [null, 41, null]
+        56: [42, 41, null]
+        57: [null, null, 43]
+        58: [45, 44, 43]
+        59: [45, 44, 46]
+        60: [45, 44, 46]
+        61: [null, 47, 46]
+        62: [48, 47, 46]
+        63: [48, 47, 49]
+        64: [null, 50, 49]
+    selective:
+      relative: 5p
+      values:
+        58: [45, 44, 43]
+        59: [45, 44, 46] 
+        60: [45, 44, 46]
+        62: [48, 47, 46]
+        63: [48, 47, 49]
+    3p:
+      relative: 3p
+      valid_range: [45, 70]
+      default_value: 0
+  Tr:
+    default: std
+    std:
+      relative: 5p
+      valid_range: [28, 64]
+      default_func: mid_value
+    3p:
+      relative: 3p
+      valid_range: [21, 60]
+      default_value: 0
