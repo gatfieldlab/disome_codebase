@@ -1,0 +1,61 @@
+#!/usr/bin/env Rscript
+
+require("viridis")
+library("geneticcode")
+library("RColorBrewer")
+source("rustr.R")
+
+# pal <- viridis_pal(option = "A")
+pal <- function(x) brewer.pal(n = x, "Dark2")
+aa_pal <- c("#b71466", "#bded9b", "#571f17", "#860291", "#da8837", "#adab97",
+            "#6b52c9", "#85c7c9", "#aed9ee", "#eceb08", "#3b13cf", "#57a059",
+            "#6af26b", "#17afdf", "#11e6fd", "#3f726b", "#e6425c", "#69ad22",
+            "#338fd8", "#74c31c", "#b32db1")
+plot_params <- list(
+    "aminoacid" = list(legend_pos = "bottomright",
+                       colors = aa_pal, filter = FALSE,
+                       normalized = TRUE, ylim = c(0.5, 2.3), log = "y"),
+    "codon" = list(legend_pos = "bottomright", colors = "auto", filter = FALSE,
+                   normalized = TRUE, ylim = c(0.5, 2.7), log = "y"),
+    "6mer" = list(legend_pos = "none", colors = "auto", filter = TRUE,
+                  normalized = TRUE, ylim = c(0.1, 5.3), log = "y"),
+    "9mer" = list(legend_pos = "none", colors = "auto", filter = TRUE,
+                  normalized = TRUE, ylim = c(0.1, 7.5), log = "y"),
+    "dipeptide" = list(legend_pos = "none", colors = "auto", filter = TRUE,
+                       normalized = TRUE, ylim = c(0.25, 5), log = "y"),
+    "tripeptide" = list(legend_pos = "none", colors = "auto", filter = TRUE,
+                        normalized = TRUE, ylim = c(0.1, 6.8), log = "y"))
+read_boundaries <- list(
+    "di" = list(c(-16.5, -14.5), c(3.5, 4.5)),
+    "rp" = list(c(-5.5, -4.5), c(3.5, 4.5)),
+    "tr" = list(c(-6.5, -3.5), c(3.5, 6.5)))
+x_shifts <- list(
+  "aminoacid" = 0,
+  "codon" = 0,
+  "6mer" = 0,
+  "9mer" = 1,
+  "dipeptide" = 0,
+  "tripeptide" = 1)
+plot_func <- "codon"
+for (read_type in names(read_boundaries)) {
+  rust_dir <- paste(read_type, plot_func, sep = "_")
+  rust_files <- dir(path = rust_dir)
+  rust_file <- rust_files[grep("meta", rust_files)]
+  rust_base <- substr(rust_file, 1, nchar(rust_file) - 9)
+  rust_data <- read.rust(paste(rust_dir, rust_base, sep = "/"))
+  read_boundary <- read_boundaries[[read_type]]
+  params <- plot_params[[plot_func]]
+  for (aa in aminoacids_1l) {
+    file_name <- paste("codons_by_aa_2/", aa, "_codons_", read_type,
+                       "_rust_norm.pdf", sep = "")
+    words <- deduce_nuc_seq(aa)
+    pdf(file_name)
+    colors <- if (params[["colors"]][1] == "auto") pal(length(words)) else params[["colors"]]
+    plot.rust(rust_data, words_subset = words, normalized = params[["normalized"]],
+              legend_pos = params[["legend_pos"]], col = colors,
+              log = params[["log"]], ylim = params[["ylim"]], shift = x_shifts[[plot_func]],
+              ap_site = TRUE, boxes = read_boundary, box_col = "gray95")
+    dev.off()
+  }
+}
+quit(save = "no", status = 0)
